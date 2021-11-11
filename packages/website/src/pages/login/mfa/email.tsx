@@ -1,3 +1,5 @@
+import type { from } from 'responselike';
+
 import { $fetch, FetchError } from 'ohmyfetch'
 import queryString from 'query-string'
 import ILArrow from 'virtual:icons/mdi/arrow-left'
@@ -11,6 +13,7 @@ import Ninput from '~/components/login/input'
 import LogoLink from '~/components/login/link'
 import { useI18n } from '~/plugins/i18n'
 import toast from '~/utils/toast'
+import {checkInput} from '~/utils/validator'
 export default defineComponent({
 	layout: 'login',
 	setup() {
@@ -21,10 +24,10 @@ export default defineComponent({
 		const { loading, run: try_login } = useRequest(() =>
 			$fetch('/api/user/login/code', {
 				method: 'POST',
-				body: JSON.stringify({
+				body: {
 					type: 'email',
 					code: field.value
-				})
+				}
 			}), {
 			manual: true,
 			onError: (e, params) => {
@@ -39,7 +42,13 @@ export default defineComponent({
 				router.push('/')
 			}
 		})
-
+		const try_next = () => {
+			if (!checkInput(field.value, 'code6')) {
+				toast(login.illegal.code, 'warning')
+				return
+			}
+			try_login()
+		}
 		const { loading: resending, run: try_resend} = useRequest('/api/user/login/email', {
 			manual: true,
 			onError: (e, params) => {
@@ -72,15 +81,7 @@ export default defineComponent({
 						disabled={loading.value}
 						loading={loading.value}
 						w:opacity={!loading.value ? '' : '50'}
-						onClick={() => {
-							console.log(
-								JSON.stringify({
-									type: 'email',
-									code: field.value
-								})
-							);
-							try_login()
-						}}>{login.common.login}</NButton>
+						onClick={try_next}>{login.common.login}</NButton>
 				</div>
 				<div w:text='sm cool-gray-700' w:m='t-3' w:p='l-3px'>
 					<Link><span w:text='light-blue-600'

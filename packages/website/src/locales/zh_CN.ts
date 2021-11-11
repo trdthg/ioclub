@@ -40,7 +40,8 @@ const p = {
 			eorp: '邮箱或手机号格式不符',
 			password: '密码不能为空',
 			samepassword: '两次密码不一致',
-			email: '邮箱格式不符'
+			email: '邮箱格式不符',
+			code: '验证码格式不符'
 		},
 		loginway: {
 			mfa: '两步验证',

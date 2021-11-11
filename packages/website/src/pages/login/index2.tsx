@@ -23,7 +23,7 @@ export default defineComponent({
 		const loading = ref(false);
 		const { login } = i18n.value
 		watch(field, () => {
-			if (checkInput(field.value, 'username') || checkInput(field.value, 'email')) {
+			if (checkInput(field.value, 'phone') || checkInput(field.value, 'email')) {
 				return
 			}
 			console.log('watch 不符合格式')
@@ -32,10 +32,6 @@ export default defineComponent({
 			const v: Record<string, unknown> = {}
 			v[typ] = val
 			v.type = typ
-			if (typ == 'username') {
-				typ = 'password'
-				v.type = typ
-			}
 			console.log(v)
 			const {data, loading, run} = useRequest(() =>
 				$fetch('/api/user/login', {
@@ -52,16 +48,15 @@ export default defineComponent({
 				},
 				onSuccess: (data, param) => {
 					console.log('onSucess ', 'data: ', data, 'param ', param);
-					router.push('/login/password')
-					// router.push(`/login/${typ}`)
+					router.push('/login/code')
 				}
 			})
 			return {data, loading, run}
 		}
 		const try_next = () => {
-			const typ = ['username', 'email'].find(e => checkInput(field.value, e))
+			const typ = ['phone', 'email'].find(e => checkInput(field.value, e))
 			if (!typ) {
-				toast(login.illegal.username, 'warning')
+				toast(login.illegal.email, 'warning')
 				return
 			}
 			const { run, loading: loading2 } = try_handle(typ, field.value)
@@ -70,12 +65,12 @@ export default defineComponent({
 		}
 		return () => {
 			return <div>
-				<LogoLink to='/login/mfa' icon={<LoginIcon/>}>{login.loginway.eorp}</LogoLink>
+				<LogoLink to='/login/mfa' icon={<LoginIcon/>}>{login.loginway.userpasswordlogin}</LogoLink>
 				<div w:m='t-4' w:text='2xl true-gray-900' w:font='medium'>
 					{login.common.login}
 				</div>
 				<Ninput
-					placeholder='输入用户名邮箱或密码' //{login.placeholder.username}
+					placeholder='输入用户名邮箱或手机号'
 					value={field.value}
 					onChange={e => field.value = e}/>
 				<div w:text='sm cool-gray-700' w:m='t-3' w:p='l-3px'>

@@ -327,6 +327,9 @@ export const user: FastifyPluginCallback<Config> = fp(async function (app, optio
 					const id = user[req.body.type]
 
 					let check: boolean
+					console.log(1, req.body.code);
+					console.log(2, req.body.type);
+
 					try {
 						check = await app.auth.check({
 							id,
